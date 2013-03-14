@@ -21,14 +21,10 @@
   margin-left: 7px;
 }
 
-.DV-autoZoom .p0,
-.DV-autoZoom .p1,
-.DV-autoZoom .p2 {
+.DV-autoZoom .dynamic-page {
   padding-left: 35px;
 }
-.DV-mini .p0,
-.DV-mini .p1,
-.DV-mini .p2 {
+.DV-mini .dynamic-page {
   padding-left: 7px;
 }
 

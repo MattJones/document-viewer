@@ -2,9 +2,7 @@
 .DV-viewThumbnails .DV-text,
 .DV-viewThumbnails .DV-search,
 .DV-viewThumbnails .DV-pageCollection,
-.p0,
-.p1,
-.p2{
+.dynamic-page{
   display:none;
 }
 
