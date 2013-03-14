@@ -23,6 +23,7 @@ DV.Schema.events = {
     var midpoint      = scrollPos + (this.viewer.$(win).height() / 3);
     var currentPage   = _.sortedIndex(offsets, scrollPos);
     var middlePage    = _.sortedIndex(offsets, midpoint);
+    if( middlePage <= 0) return; // Don't draw pages if the viewer is hidden
     if (offsets[currentPage] == scrollPos) currentPage++ && middlePage++;
     var pageIds       = this.helpers.sortPages(middlePage - 1);
     var total         = doc.totalPages;
@@ -32,16 +33,22 @@ DV.Schema.events = {
 
   // Draw the page at the given index.
   drawPageAt : function(pageIds, index) {
-    var first = index == 0;
-    var last  = index == this.models.document.totalPages - 1;
-    if (first) index += 1;
-    var pages = [
-      { label: pageIds[0], index: index - 1 },
-      { label: pageIds[1], index: index },
-      { label: pageIds[2], index: index + 1 }
-    ];
-    if (last) pages.pop();
-    pages[first ? 0 : pages.length - 1].currentPage = true;
+    // prevent indices < 0 from trying to load
+    if(index < this.viewer.options.readBehind) index = this.viewer.options.readBehind;
+    
+    // associate DOM pages with doc pages
+    var pages = [];
+    for( var i=0; i<pageIds.length; i++){
+      pages.push({ label: pageIds[i], index: index + i - this.viewer.options.readBehind });
+    }
+    
+    // pop out-of-bounds pages
+    var numExtraPages = index + this.viewer.options.readAhead + 1 - this.models.document.totalPages
+    if(numExtraPages > 0){
+      for(var i=0;i<numExtraPages;i++){ pages.pop(); }
+    }
+    
+    // draw pages
     this.viewer.pageSet.draw(pages);
   },
 
