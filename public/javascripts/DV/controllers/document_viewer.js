@@ -115,7 +115,7 @@ DV.DocumentViewer.prototype.jQuery = function(selector, context) {
 // The origin function, kicking off the entire documentViewer render.
 DV.load = function(documentRep, options) {
   options = options || {};
-  var id  = documentRep.id || documentRep.match(/([^\/]+)(\.js|\.json)$/)[1];
+  var id  = documentRep.id || documentRep.match(/([^\/]+)(\.js|\.json)($|\?)/)[1]; //Edit by Matt Jones to allow parameterized rails URL
   if ('showSidebar' in options) options.sidebar = options.showSidebar;
   var defaults = {
     container : document.body,

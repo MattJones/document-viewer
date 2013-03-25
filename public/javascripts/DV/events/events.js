@@ -23,6 +23,7 @@ DV.Schema.events = {
     var midpoint      = scrollPos + (this.viewer.$(win).height() / 3);
     var currentPage   = _.sortedIndex(offsets, scrollPos);
     var middlePage    = _.sortedIndex(offsets, midpoint);
+    if( middlePage <= 0 return); // Edit by MAtt Jones, don't draw pages if the viewer is hidden
     if (offsets[currentPage] == scrollPos) currentPage++ && middlePage++;
     var pageIds       = this.helpers.sortPages(middlePage - 1);
     var total         = doc.totalPages;
