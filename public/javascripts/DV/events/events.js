@@ -33,16 +33,22 @@ DV.Schema.events = {
 
   // Draw the page at the given index.
   drawPageAt : function(pageIds, index) {
-    var first = index == 0;
-    var last  = index == this.models.document.totalPages - 1;
-    if (first) index += 1;
-    var pages = [
-      { label: pageIds[0], index: index - 1 },
-      { label: pageIds[1], index: index },
-      { label: pageIds[2], index: index + 1 }
-    ];
-    if (last) pages.pop();
-    pages[first ? 0 : pages.length - 1].currentPage = true;
+    // prevent indices < 0 from trying to load
+    if(index < this.viewer.options.readBehind) index = this.viewer.options.readBehind;
+    
+    // associate DOM pages with doc pages
+    var pages = [];
+    for( var i=0; i<pageIds.length; i++){
+      pages.push({ label: pageIds[i], index: index + i - this.viewer.options.readBehind });
+    }
+    
+    // pop out-of-bounds pages
+    var numExtraPages = index + this.viewer.options.readAhead + 1 - this.models.document.totalPages
+    if(numExtraPages > 0){
+      for(var i=0;i<numExtraPages;i++){ pages.pop(); }
+    }
+    
+    // draw pages
     this.viewer.pageSet.draw(pages);
   },
 

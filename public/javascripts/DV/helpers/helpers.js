@@ -341,9 +341,19 @@ DV.Schema.helpers = {
 
     // Determine the correct DOM page ordering for a given page index.
     sortPages : function(pageIndex) {
-      if (pageIndex == 0 || pageIndex % 3 == 1) return ['p0', 'p1', 'p2'];
-      if (pageIndex % 3 == 2)                   return ['p1', 'p2', 'p0'];
-      if (pageIndex % 3 == 0)                   return ['p2', 'p0', 'p1'];
+      //  Original code, with default readAhead=readBehind=1:
+      //  if (pageIndex == 0 || pageIndex % 3 == 1) return ['p0', 'p1', 'p2'];
+      //  if (pageIndex % 3 == 2)                   return ['p1', 'p2', 'p0'];
+      //  if (pageIndex % 3 == 0)                   return ['p2', 'p0', 'p1'];
+      var numPages = this.viewer.options.readAhead + this.viewer.options.readBehind + 1;
+      var baseArr = [];
+      for(var i=0;i<numPages;i++){
+        baseArr.push('p'+i);
+      }
+      //baseArr will be ['p0', 'p1', 'p2', 'p3', ...]
+      if (pageIndex <= this.viewer.options.readBehind) return baseArr;
+      var offset = (pageIndex + numPages - this.viewer.options.readBehind) % numPages;
+      return baseArr.slice(offset).concat(baseArr.slice(0,offset));
     },
 
     addObserver: function(observerName){
@@ -412,7 +422,8 @@ DV.Schema.helpers = {
 
     constructPages: function(){
       var pages = [];
-      var totalPagesToCreate = (this.viewer.schema.data.totalPages < 3) ? this.viewer.schema.data.totalPages : 3;
+      var maxPagesToCreate = this.viewer.options.readAhead + this.viewer.options.readBehind + 1;
+      var totalPagesToCreate = (this.viewer.schema.data.totalPages < maxPagesToCreate) ? this.viewer.schema.data.totalPages : maxPagesToCreate;
 
       var height = this.models.pages.height;
       for (var i = 0; i < totalPagesToCreate; i++) {

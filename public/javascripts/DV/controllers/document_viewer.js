@@ -124,6 +124,8 @@ DV.load = function(documentRep, options) {
   };
   options            = _.extend({}, defaults, options);
   options.fixedSize  = !!(options.width || options.height);
+  options.readAhead  = ('readAhead' in options) ? options.readAhead : 1;
+  options.readBehind = ('readBehind' in options) ? options.readBehind : 1;
   var viewer         = new DV.DocumentViewer(options);
   DV.viewers[id]     = viewer;
   // Once we have the JSON representation in-hand, finish loading the viewer.

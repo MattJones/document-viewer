@@ -137,10 +137,11 @@ DV.PageSet.prototype.draw = function(pageCollection){
 };
 
 DV.PageSet.prototype.redraw = function(stopResetOfPosition, redrawAnnotations) {
-  if (this.pages['p0']) this.pages['p0'].draw({ force: true, forceAnnotationRedraw : redrawAnnotations });
-  if (this.pages['p1']) this.pages['p1'].draw({ force: true, forceAnnotationRedraw : redrawAnnotations });
-  if (this.pages['p2']) this.pages['p2'].draw({ force: true, forceAnnotationRedraw : redrawAnnotations });
-
+  var numPages = this.viewer.options.readAhead + this.viewer.options.readBehind + 1
+  for(var i = 0; i < numPages; i++){
+    var pageName = 'p' + i;
+    if (this.pages[pageName]) this.pages[pageName].draw({ force: true, forceAnnotationRedraw : redrawAnnotations });
+  }
   if(redrawAnnotations && this.viewer.activeAnnotation){
     this.viewer.helpers.jump(this.viewer.activeAnnotation.page.index,this.viewer.activeAnnotation.position.top - 37);
   }
